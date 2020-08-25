@@ -66,6 +66,7 @@ def picture_processing(img, plot=False):
 
     if plot:
         plt.subplot(121), plt.imshow(img), plt.title('Input')
+        plt.xticks([]), plt.yticks([])
         plt.subplot(122), plt.imshow(dst), plt.title('Output')
         plt.xticks([]), plt.yticks([])
         plt.show()
