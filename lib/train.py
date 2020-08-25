@@ -8,7 +8,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 import torchvision
 
-DEVICE = 'cpu'
+DEVICE = ("cuda" if torch.cuda.is_available() else "cpu")
 N_EPOCHS = 15
 LEARNING_RATE = 0.001
 torch.manual_seed(42)
@@ -58,6 +58,8 @@ if __name__ == "__main__":
     network = Net().to(DEVICE)
     optimizer = optim.RMSprop(network.parameters(), lr=LEARNING_RATE,
                               alpha=0.9, eps=1e-08, weight_decay=0.0)
+    # scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min')
+    
     lossCE = nn.CrossEntropyLoss()
 
     train_loader = torch.utils.data.DataLoader(
@@ -103,6 +105,7 @@ if __name__ == "__main__":
         test_losses.append(test_loss)
         print(f'Epoch {epoch+1}: Acc: {correct}/{len(test_loader.dataset)}' +
               f' ({100. * correct / len(test_loader.dataset):.2f}%)\n')
+        # scheduler.step(test_loss)
 
     CHECKPOINT = {'model': Net(),
                   'state_dict': network.state_dict(),
