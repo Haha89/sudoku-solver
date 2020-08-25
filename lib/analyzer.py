@@ -63,13 +63,8 @@ def picture_processing(img, plot=False):
                        [WIDTH_WRAP, WIDTH_WRAP]])
     transfo = cv.getPerspectiveTransform(pts1, pts2)
     dst = cv.warpPerspective(img, transfo, (WIDTH_WRAP, WIDTH_WRAP))
-
-    if plot:
-        plt.subplot(121), plt.imshow(img), plt.title('Input')
-        plt.xticks([]), plt.yticks([])
-        plt.subplot(122), plt.imshow(dst), plt.title('Output')
-        plt.xticks([]), plt.yticks([])
-        plt.show()
+    dst = cv.cvtColor(dst, cv.COLOR_BGR2GRAY)
+    dst = cv.threshold(dst, 140, 255, cv.THRESH_BINARY)[1]
 
     #Cut the picture in 81 squares
     side = WIDTH_WRAP//9
@@ -78,7 +73,5 @@ def picture_processing(img, plot=False):
         for j in range(9):
             pic = dst[i*side + MARGIN: (i + 1) *side - MARGIN,
                       j*side + MARGIN: (j + 1) *side - MARGIN]
-            binary_pic = cv.cvtColor(pic, cv.COLOR_BGR2GRAY)
-            binary_pic = cv.threshold(binary_pic, 140, 255, cv.THRESH_BINARY)[1]
-            squares.append(~binary_pic/255)
-    return squares
+            squares.append(~pic/255)
+    return squares, dst, img

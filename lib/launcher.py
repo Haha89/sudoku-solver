@@ -8,17 +8,19 @@ import matplotlib.pyplot as plt
 import cv2 as cv
 
 from analyzer import picture_processing
-from solver import print_board, sudoku_solver
+from solver import display_solved_picture
 from predict import predict_digit, load_checkpoint
 from train import Net
 
 
 def solver(path, debug=False):
     IMG = cv.imread(path)
-    SQUARES = picture_processing(IMG, plot=debug)
+    SQUARES, PIC_PP, IMG = picture_processing(IMG, plot=debug)
     MODEL = load_checkpoint('../results/model.pth')
     digits = [predict_digit(el, MODEL) for el in SQUARES]
-
+    board = np.resize(np.array(digits), (9, 9))
+    filled_sudoku = display_solved_picture(PIC_PP, board)
+    
     if debug:
         fig = plt.figure(figsize=(13, 13))
         ax = []
@@ -28,10 +30,17 @@ def solver(path, debug=False):
             plt.imshow(SQUARES[i], alpha=0.25)
             plt.axis('off')
         plt.show()
-
-    board = np.resize(np.array(digits), (9, 9))
-    print_board(board)
-    print_board(sudoku_solver(board))
+        
+        plt.subplot(131), plt.imshow(IMG), plt.title('Main Grid detection')
+        plt.xticks([]), plt.yticks([])
+        plt.subplot(132), plt.imshow(PIC_PP, cmap='gray'), plt.title('Preprocessed grid')
+        plt.xticks([]), plt.yticks([])
+        plt.subplot(133), plt.imshow(filled_sudoku), plt.title('Completed Sudoku')
+        plt.xticks([]), plt.yticks([])
+        plt.show()
+        
+    plt.imshow(filled_sudoku)
+    plt.show()    
 
 
 if __name__ == "__main__":

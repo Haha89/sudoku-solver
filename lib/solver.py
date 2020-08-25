@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 """Contains all the functions related to solving a sudoku"""
 
+import cv2 as cv
 import numpy as np
+
+FONT = cv.FONT_HERSHEY_SIMPLEX
 
 def find_empty(board):
     """Find and return the position of first empty value in board"""
@@ -19,7 +22,6 @@ def solve_step(board):
     lig, col = miss
     for i in range(1, 10):
         if is_valid(board, i, (lig, col)):
-
             board[lig, col] = i
             if solve_step(board): #Recursive call
                 return True
@@ -56,8 +58,23 @@ def print_board(board):
 
 def sudoku_solver(grid):
     """Function that solves the grid and returns it"""
-    if solve_step(grid):
-        print('-'*19)
-    else:
+    if not solve_step(grid):
         print("No solution exists")
+        return None
     return grid
+
+
+def display_solved_picture(picture, board):
+    """Fills the empty sudoku picture"""
+    init_board = board.copy()
+    solved_board = sudoku_solver(board)
+    backtorgb = cv.cvtColor(picture, cv.COLOR_GRAY2RGB)
+    if solved_board is not None:
+        for i in range(9):
+            for j in range(9):
+                x = 34*j + 10
+                y = 34*i + 30
+                if init_board[i, j] == 0: #Add the number only is initially missing
+                    cv.putText(backtorgb, str(solved_board[i, j]), (x, y),
+                               FONT, 1, (0,255,0), 2, cv.LINE_AA)
+    return backtorgb
