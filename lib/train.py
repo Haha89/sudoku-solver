@@ -57,9 +57,7 @@ class Net(nn.Module):
 if __name__ == "__main__":
     network = Net().to(DEVICE)
     optimizer = optim.RMSprop(network.parameters(), lr=LEARNING_RATE,
-                              alpha=0.9, eps=1e-08, weight_decay=0.0)
-    # scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min')
-    
+                              alpha=0.9, eps=1e-08, weight_decay=0.0)    
     lossCE = nn.CrossEntropyLoss()
 
     train_loader = torch.utils.data.DataLoader(
@@ -87,8 +85,8 @@ if __name__ == "__main__":
         network.train()
         for batch_idx, (data, target) in enumerate(train_loader):
             optimizer.zero_grad()
-            output = network(data)
-            loss = lossCE(output, target)
+            output = network(data.to(DEVICE))
+            loss = lossCE(output, target.to(DEVICE))
             loss.backward()
             optimizer.step()
 
@@ -97,15 +95,15 @@ if __name__ == "__main__":
         correct = 0
         with torch.no_grad():
             for data, target in test_loader:
-                output = network(data)
-                test_loss += lossCE(output, target).item()
+                output = network(data.to(DEVICE))
+                test_loss += lossCE(output, target.to(DEVICE)).item()
                 pred = output.data.max(1, keepdim=True)[1]
-                correct += pred.eq(target.data.view_as(pred)).sum()
+                correct += pred.eq(target.to(DEVICE).data.view_as(pred)).sum()
         test_loss /= len(test_loader.dataset)
         test_losses.append(test_loss)
         print(f'Epoch {epoch+1}: Acc: {correct}/{len(test_loader.dataset)}' +
-              f' ({100. * correct / len(test_loader.dataset):.2f}%)\n')
-        # scheduler.step(test_loss)
+              f' ({100. * correct / len(test_loader.dataset):.2f}%)')
+
 
     CHECKPOINT = {'model': Net(),
                   'state_dict': network.state_dict(),
