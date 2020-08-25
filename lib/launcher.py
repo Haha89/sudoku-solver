@@ -13,27 +13,22 @@ from predict import predict_digit, load_checkpoint
 from train import Net
 
 
-def solver(path):
+def solver(path, debug=False):
     IMG = cv.imread(path)
-    SQUARES = picture_processing(IMG, plot=True)
-    digits = []
+    SQUARES = picture_processing(IMG, plot=debug)
     MODEL = load_checkpoint('../results/model.pth')
+    digits = [predict_digit(el, MODEL) for el in SQUARES]
 
-    for i, el in enumerate(SQUARES):
-        digit = predict_digit(el, MODEL)
-        digits.append(digit)
+    if debug:
+        fig = plt.figure(figsize=(13, 13))
+        ax = []
+        for i, digit in enumerate(digits):
+            ax.append(fig.add_subplot(9, 9, i+1))
+            ax[-1].set_title(f"Predict : {digit}")
+            plt.imshow(SQUARES[i], alpha=0.25)
+            plt.axis('off')
+        plt.show()
 
-
-    fig = plt.figure(figsize=(13, 13))
-    ax = []
-    for i, digit in enumerate(digits):
-        ax.append(fig.add_subplot(9, 9, i+1))
-        ax[-1].set_title(f"Predict : {digit}")
-        plt.imshow(SQUARES[i], alpha=0.25)
-        plt.axis('off')
-    plt.show()
-
-    #Resize to 9*9 and resolves
     board = np.resize(np.array(digits), (9, 9))
     print_board(board)
     print_board(sudoku_solver(board))
@@ -43,6 +38,9 @@ if __name__ == "__main__":
     if len(sys.argv) == 1:
         print("No path given. Default picture used")
         solver('..\\inputs\\sudo-med.jpeg')
+    elif len(sys.argv) == 2:
+        solver(sys.argv[1])
+    elif len(sys.argv) == 3:
+        solver(sys.argv[1], sys.argv[2])
     else:
-        for el in sys.argv[1:]:
-            solver(el)
+        print("To many arguments given. please provide PATH_FILE and DEBUG")

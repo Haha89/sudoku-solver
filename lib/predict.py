@@ -1,20 +1,12 @@
 # -*- coding: utf-8 -*-
 
-"""Functions about predicting the digit contained in an image"""
+"""Functions dealing with the prediction of digit contained in cell image"""
 
 import torch
 from torchvision import transforms
 import numpy as np
 from matplotlib import pyplot as plt
 
-try:
-    from PIL import Image
-except ImportError:
-    import Image
-
-import pytesseract
-
-pytesseract.pytesseract.tesseract_cmd = '..\\..\\..\\Tesseract\\tesseract'
 
 def load_checkpoint(filepath):
     """Function loading the trained CNN on the QMNIST dataset"""
@@ -52,15 +44,3 @@ def predict_digit(img, model, debug=False):
         print(f"Prediction {torch.argmax(prediction).item()}")
 
     return torch.argmax(prediction).item()
-
-
-def predict_tesseract(img):
-    """Alternative using Tesseract module for predition"""
-
-    final_image = Image.fromarray(img).convert("L")
-    output = pytesseract.image_to_data(final_image,
-                                       config=("-c tessedit"
-                                               "_char_whitelist=0123456789"
-                                               " --psm 10"
-                                               " -l osd "))
-    return output
