@@ -32,14 +32,19 @@ def solve_step(board):
 def is_valid(board, num, pos):
     """Check if the number num in position pos is valid in the board"""
     lig, col = pos
-    start_x = (lig // 3) * 3
-    start_y = (col // 3) * 3
+    box_x = (lig // 3) * 3
+    box_y = (col // 3) * 3
 
-    if num in board[lig, :] or num in board[:, col]:
-        return False #Check on line and column
+    if num in np.delete(board[lig, :], col):
+        return False #Check on line without pos cell
+    
+    if num in np.delete(board[:, col], lig):
+        return False #Check on column without pos cell
 
-    if num in board[start_x: start_x + 3, start_y: start_y + 3]:
-        return False #Check on 3*3 box
+    box = board[box_x: box_x + 3, box_y: box_y + 3]
+    box = np.resize(box, (1, 9))[0]
+    if num in np.delete(box, 3*(lig % 3) + (col % 3)):
+        return False #Check on 3*3 box without pos cell
     return True
 
 
@@ -55,6 +60,17 @@ def print_board(board):
             if num == 0:
                 num = "."
             print(num) if j == 8 else print(str(num) + " ", end="")
+
+
+def grid_valid(board):
+    """Check if the grid extracted is correct"""
+    for i in range(9): #Row
+        for j in range(9): #col
+            if board[i, j] > 0:
+                if not is_valid(board, board[i, j], (i, j)):
+                    return False
+    return True        
+
 
 def sudoku_solver(grid):
     """Function that solves the grid and returns it"""
