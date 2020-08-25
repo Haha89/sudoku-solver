@@ -56,7 +56,7 @@ def solver(path, debug=False):
 if __name__ == "__main__":
     if len(sys.argv) == 1:
         print("No path given. Default picture used")
-        solver('..\\inputs\\sudo-2.jpeg', True)
+        solver('..\\inputs\\sudo-med.jpeg', True)
     elif len(sys.argv) == 2:
         solver(sys.argv[1])
     elif len(sys.argv) == 3:
