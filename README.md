@@ -20,10 +20,13 @@ Sudoku image solver program using Open CV, Pytorch and Numpy
 - Pytorch and Pytorchvision
 
 ### Execution:
-run `python launcher.py [PATH_PICTURE] [PLOT]` 
-PATH_PICTURE: optional, path of the picture containing the sudoku
-PLOT: optional, boolean to set to True if you want to see some plots 
+run `python launcher.py [path] [debug]`  
+**path**: optional, path of the picture containing the sudoku. If blank, uses the default picture displayed below  
+**debug**: optional, boolean to set to True if you want to see some plots   
 
 ### Result:
 ![alt text](https://github.com/Haha89/sudoku-solver/blob/master/results/Figure_1.png "Picture Preprocessing")
 ![alt text](https://github.com/Haha89/sudoku-solver/blob/master/results/Figure_2.png "Example of OCR")
+
+### Next steps:
+- Increase OCR to better recognize the digits
