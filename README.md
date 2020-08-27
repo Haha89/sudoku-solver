@@ -21,8 +21,8 @@ Sudoku image solver program using Open CV, Pytorch and Numpy
 
 ### Execution:
 run `python launcher.py [PATH_PICTURE] [PLOT]` 
-PATH_PICTURE: optionnal, path of the picture containing the sudoku
-PLOT: optionnal, boolean to set to True if you want to see some plots 
+PATH_PICTURE: optional, path of the picture containing the sudoku
+PLOT: optional, boolean to set to True if you want to see some plots 
 
 ### Result:
 ![alt text](https://github.com/Haha89/sudoku-solver/blob/master/results/Figure_1.png "Picture Preprocessing")
